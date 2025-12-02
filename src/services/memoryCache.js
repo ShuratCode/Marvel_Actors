@@ -1,3 +1,5 @@
+import { logger } from '../utils/logger.js';
+
 export class MemoryCache {
   constructor(defaultTtlSeconds = 60) {
     this.cache = new Map();
@@ -33,9 +35,11 @@ export class MemoryCache {
     const cachedValue = this.get(key);
 
     if (cachedValue !== null) {
+      logger.info(`Cache hit for key: ${key}`);
       return cachedValue;
     }
 
+    logger.info(`Cache miss for key: ${key}. Fetching data...`);
     try {
       const value = await fetchFunction();
       this.set(key, value, ttlSeconds);
@@ -49,4 +53,3 @@ export class MemoryCache {
     this.cache.clear();
   }
 }
-

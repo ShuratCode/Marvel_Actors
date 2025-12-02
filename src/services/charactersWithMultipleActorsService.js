@@ -1,3 +1,5 @@
+import { logger } from '../utils/logger.js';
+
 export class CharactersWithMultipleActorsService {
   constructor(tmdbClient, cache, movies) {
     this.tmdbClient = tmdbClient;
@@ -6,6 +8,7 @@ export class CharactersWithMultipleActorsService {
   }
 
   async getCharactersWithMultipleActors() {
+    logger.info("Starting execution of getCharactersWithMultipleActors...");
     const characterActorsMap = new Map();
 
     const movieEntries = Object.entries(this.movies);
@@ -45,7 +48,7 @@ export class CharactersWithMultipleActorsService {
       }
     }
 
+    logger.info("Finished execution of getCharactersWithMultipleActors.");
     return result;
   }
 }
-

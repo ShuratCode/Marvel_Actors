@@ -8,6 +8,7 @@ import { ActorsMultipleCharactersService } from "./src/services/actorsMultipleCh
 import { CharactersWithMultipleActorsService } from "./src/services/charactersWithMultipleActorsService.js";
 import { createApiRouter } from "./src/routes/api.js";
 import { errorHandler } from "./src/middleware/errorHandler.js";
+import { requestLogger } from "./src/middleware/requestLogger.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -49,6 +50,7 @@ const apiRouter = createApiRouter({
 });
 
 app.use(express.json());
+app.use(requestLogger); 
 app.use("/api/v1", apiRouter);
 
 // Centralized Error Handler

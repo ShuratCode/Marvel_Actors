@@ -18,18 +18,22 @@ This project is a Node.js Express application that provides insights into the Ma
 
 ## Setup
 
-1.  **Install Dependencies**:
+1. **Install Dependencies**:
+
     ```bash
     npm install
     ```
 
-2.  **Environment Configuration**:
+2. **Environment Configuration**:
     Create a `.env` file in the root directory based on `.env.example`:
+
     ```bash
     cp .env.example .env
     ```
+
     Open `.env` and add your TMDB API Key:
-    ```
+
+    ```shell
     TMDB_API_KEY=your_actual_api_key_here
     PORT=3000
     ```
@@ -37,11 +41,13 @@ This project is a Node.js Express application that provides insights into the Ma
 ## Running the Application
 
 - **Development Mode**:
+
   ```bash
   npm run dev
   ```
 
 - **Production Start**:
+
   ```bash
   npm start
   ```
@@ -53,11 +59,13 @@ The server will start on `http://localhost:3000` (or the PORT specified in `.env
 The project uses **Jest** for unit and integration testing.
 
 - **Run all tests**:
+
   ```bash
   npm test
   ```
 
 - **Run tests in watch mode**:
+
   ```bash
   npm run test:watch
   ```
@@ -67,10 +75,12 @@ The project uses **Jest** for unit and integration testing.
 Base URL: `/api/v1`
 
 ### 1. Get Movies Per Actor
+
 Returns a mapping of actors to the list of MCU movies they appeared in.
 
 - **Endpoint**: `GET /api/v1/movies-per-actor`
 - **Response**:
+
   ```json
   {
     "Robert Downey Jr.": [
@@ -86,10 +96,12 @@ Returns a mapping of actors to the list of MCU movies they appeared in.
   ```
 
 ### 2. Get Actors With Multiple Characters
+
 Returns a list of actors who have played more than one unique character.
 
 - **Endpoint**: `GET /api/v1/actors-multiple-characters`
 - **Response**:
+
   ```json
   [
     {
@@ -104,10 +116,12 @@ Returns a list of actors who have played more than one unique character.
   ```
 
 ### 3. Get Characters With Multiple Actors
+
 Returns a list of characters that have been portrayed by more than one actor.
 
 - **Endpoint**: `GET /api/v1/characters-multiple-actors`
 - **Response**:
+
   ```json
   [
     {
@@ -123,7 +137,7 @@ Returns a list of characters that have been portrayed by more than one actor.
 
 ## Project Structure
 
-```
+```shell
 .
 ├── src/
 │   ├── clients/        # External API clients (TMDB)
@@ -143,4 +157,3 @@ Returns a list of characters that have been portrayed by more than one actor.
 - **Dependency Injection**: Services receive their dependencies (Client, Cache, Data) in the constructor, allowing easy mocking in tests.
 - **Cache-Aside Pattern**: The `MemoryCache` service wraps API calls. It checks the cache first; if missing, it fetches from the API and updates the cache.
 - **TDD (Test-Driven Development)**: All features were implemented by writing tests first.
-
