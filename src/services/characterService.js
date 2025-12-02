@@ -2,11 +2,11 @@ import { logger } from '../utils/logger.js';
 import pLimit from 'p-limit';
 
 export class CharacterService {
-  constructor(tmdbClient, cache, movies) {
+  constructor(tmdbClient, cache, movies, concurrencyLimit = 5) {
     this.tmdbClient = tmdbClient;
     this.cache = cache;
     this.movies = movies;
-    this.limit = pLimit(5);
+    this.limit = pLimit(concurrencyLimit);
   }
 
   async getCharactersWithMultipleActors() {

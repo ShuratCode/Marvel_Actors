@@ -20,7 +20,7 @@ describe('ActorService', () => {
       getOrSet: jest.fn(),
     };
 
-    service = new ActorService(mockTmdbClient, mockCache, mockMovies);
+    service = new ActorService(mockTmdbClient, mockCache, mockMovies, 5);
   });
 
   it('should identify actors with multiple different characters', async () => {

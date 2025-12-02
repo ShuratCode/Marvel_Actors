@@ -22,7 +22,7 @@ describe('MoviesPerActorService', () => {
       getOrSet: jest.fn(),
     };
 
-    service = new MoviesPerActorService(mockTmdbClient, mockCache, mockMovies, mockActors);
+    service = new MoviesPerActorService(mockTmdbClient, mockCache, mockMovies, mockActors, 5);
   });
 
   it('should map actors to their movies correctly including case insensitive matching', async () => {

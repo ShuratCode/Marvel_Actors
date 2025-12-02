@@ -2,12 +2,12 @@ import { logger } from '../utils/logger.js';
 import pLimit from 'p-limit';
 
 export class MoviesPerActorService {
-  constructor(tmdbClient, cache, movies, actors) {
+  constructor(tmdbClient, cache, movies, actors, concurrencyLimit = 5) {
     this.tmdbClient = tmdbClient;
     this.cache = cache;
     this.movies = movies;
     this.actors = actors;
-    this.limit = pLimit(5); // Concurrency limit of 5
+    this.limit = pLimit(concurrencyLimit);
   }
 
   async getMoviesPerActor() {

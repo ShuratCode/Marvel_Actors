@@ -20,27 +20,31 @@ if (!apiKey) {
 
 // 1. Initialize Core Services
 const tmdbClient = new TmdbClient(apiKey);
-const cacheTtl = parseInt(process.env.CACHE_TTL, 10) || 3600; // Default 1 hour
+const cacheTtl = Number.parseInt(process.env.CACHE_TTL, 10) || 3600; // Default 1 hour
 const cache = new MemoryCache(cacheTtl);
+const concurrencyLimit = Number.parseInt(process.env.CONCURRENT_REQUESTS_LIMIT, 10) || 5;
 
 // 2. Initialize Business Logic Services
 const moviesPerActorService = new MoviesPerActorService(
   tmdbClient,
   cache,
   movies,
-  actors
+  actors,
+  concurrencyLimit
 );
 
 const actorService = new ActorService(
   tmdbClient,
   cache,
-  movies
+  movies,
+  concurrencyLimit
 );
 
 const characterService = new CharacterService(
   tmdbClient,
   cache,
-  movies
+  movies,
+  concurrencyLimit
 );
 
 // 3. Setup Routes
