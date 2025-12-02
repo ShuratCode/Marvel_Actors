@@ -41,7 +41,7 @@ describe('Error Handler Middleware', () => {
 
   it('should handle programming errors (non-operational) and return generic 500 in prod/test', () => {
     const err = new Error('Database connection failed');
-    
+
     errorHandler(err, req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(500);
@@ -56,7 +56,7 @@ describe('Error Handler Middleware', () => {
   it('should call next if headers are already sent', () => {
     res.headersSent = true;
     const err = new Error('Error');
-    
+
     errorHandler(err, req, res, next);
 
     expect(next).toHaveBeenCalledWith(err);

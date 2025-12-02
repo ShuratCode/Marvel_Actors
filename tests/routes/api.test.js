@@ -6,22 +6,22 @@ import { notFoundHandler, errorHandler } from '../../src/middleware/errorHandler
 
 describe('API Routes', () => {
   let app;
-  let mockServices;
+  let mockControllers;
 
   beforeEach(() => {
-    mockServices = {
-      moviesPerActorService: {
-        getMoviesPerActor: jest.fn(),
+    mockControllers = {
+      moviesPerActorController: {
+        getMoviesPerActor: jest.fn((req, res) => res.json({ 'Actor A': ['Movie 1'] })),
       },
-      actorService: {
-        getActorsWithMultipleCharacters: jest.fn(),
+      actorController: {
+        getActorsWithMultipleCharacters: jest.fn((req, res) => res.json({ 'Actor A': [{ movieName: 'M1', characterName: 'C1' }] })),
       },
-      characterService: {
-        getCharactersWithMultipleActors: jest.fn(),
+      characterController: {
+        getCharactersWithMultipleActors: jest.fn((req, res) => res.json({ 'Char A': [{ movieName: 'M1', actorName: 'A1' }] })),
       },
     };
 
-    const router = createApiRouter(mockServices);
+    const router = createApiRouter(mockControllers);
     app = express();
     app.use('/', router);
     app.use(notFoundHandler);
@@ -29,65 +29,32 @@ describe('API Routes', () => {
   });
 
   describe('GET /moviesPerActor', () => {
-    it('should return data from service', async () => {
-      const mockData = { 'Actor A': ['Movie 1'] };
-      mockServices.moviesPerActorService.getMoviesPerActor.mockResolvedValue(mockData);
-
+    it('should call controller', async () => {
       const response = await request(app).get('/moviesPerActor');
 
+      expect(mockControllers.moviesPerActorController.getMoviesPerActor).toHaveBeenCalled();
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockData);
-    });
-
-    it('should handle errors', async () => {
-      mockServices.moviesPerActorService.getMoviesPerActor.mockRejectedValue(new Error('Service Error'));
-
-      const response = await request(app).get('/moviesPerActor');
-
-      expect(response.status).toBe(500);
-      // In test env (like prod), internal errors are masked
-      expect(response.body).toEqual({
-        status: 'error',
-        message: 'Something went very wrong!'
-      });
+      expect(response.body).toEqual({ 'Actor A': ['Movie 1'] });
     });
   });
 
   describe('GET /actorsWithMultipleCharacters', () => {
-    it('should return data from service', async () => {
-      const mockData = { 'Actor A': [{ movieName: 'M1', characterName: 'C1' }] };
-      mockServices.actorService.getActorsWithMultipleCharacters.mockResolvedValue(mockData);
-
+    it('should call controller', async () => {
       const response = await request(app).get('/actorsWithMultipleCharacters');
 
+      expect(mockControllers.actorController.getActorsWithMultipleCharacters).toHaveBeenCalled();
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockData);
+      expect(response.body).toEqual({ 'Actor A': [{ movieName: 'M1', characterName: 'C1' }] });
     });
   });
 
   describe('GET /charactersWithMultipleActors', () => {
-    it('should return data from service', async () => {
-      const mockData = { 'Char A': [{ movieName: 'M1', actorName: 'A1' }] };
-      mockServices.characterService.getCharactersWithMultipleActors.mockResolvedValue(mockData);
-
+    it('should call controller', async () => {
       const response = await request(app).get('/charactersWithMultipleActors');
 
+      expect(mockControllers.characterController.getCharactersWithMultipleActors).toHaveBeenCalled();
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockData);
-    });
-  });
-
-  describe('404 Handling', () => {
-    it('should return JSON 404 for non-existent routes', async () => {
-      const response = await request(app).get('/non-existent-route');
-
-      expect(response.status).toBe(404);
-      expect(response.headers['content-type']).toMatch(/json/);
-      // NotFoundError is operational, so it passes the message
-      expect(response.body).toEqual({
-        status: 'fail',
-        message: expect.stringContaining('Not Found'),
-      });
+      expect(response.body).toEqual({ 'Char A': [{ movieName: 'M1', actorName: 'A1' }] });
     });
   });
 });

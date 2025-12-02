@@ -39,7 +39,7 @@ export function errorHandler(err, req, res, next) {
 
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
-
+  
   // Log the error
   if (err.statusCode === 500) {
     logger.error(`${err.message} \nStack: ${err.stack}`);
