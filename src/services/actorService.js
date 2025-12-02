@@ -6,7 +6,7 @@ export class ActorService {
     this.tmdbClient = tmdbClient;
     this.cache = cache;
     this.movies = movies;
-    this.limit = pLimit(concurrencyLimit);
+    this.limit = pLimit(Number(concurrencyLimit) || 5);
   }
 
   async getActorsWithMultipleCharacters() {

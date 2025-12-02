@@ -7,7 +7,7 @@ export class MoviesPerActorService {
     this.cache = cache;
     this.movies = movies;
     this.actors = actors;
-    this.limit = pLimit(concurrencyLimit);
+    this.limit = pLimit(Number(concurrencyLimit) || 5);
   }
 
   async getMoviesPerActor() {

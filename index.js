@@ -3,6 +3,7 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import compression from "compression";
 
 // Data
 import { movies, actors } from "./dataForQuestions.js";
@@ -48,21 +49,21 @@ const moviesPerActorService = new MoviesPerActorService(
   cache,
   movies,
   actors,
-  env.CONCURRENT_REQUESTS_LIMIT
+  Number(env.CONCURRENT_REQUESTS_LIMIT)
 );
 
 const actorService = new ActorService(
   tmdbClient,
   cache,
   movies,
-  env.CONCURRENT_REQUESTS_LIMIT
+  Number(env.CONCURRENT_REQUESTS_LIMIT)
 );
 
 const characterService = new CharacterService(
   tmdbClient,
   cache,
   movies,
-  env.CONCURRENT_REQUESTS_LIMIT
+  Number(env.CONCURRENT_REQUESTS_LIMIT)
 );
 
 // 3. Initialize Controllers
@@ -77,9 +78,10 @@ const apiRouter = createApiRouter({
   characterController,
 });
 
-// Security Middleware
+// Global Middleware
 app.use(helmet()); 
 app.use(cors());
+app.use(compression()); 
 
 // Rate Limiting
 const limiter = rateLimit({
