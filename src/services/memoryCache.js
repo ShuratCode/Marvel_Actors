@@ -40,13 +40,9 @@ export class MemoryCache {
     }
 
     logger.info(`Cache miss for key: ${key}. Fetching data...`);
-    try {
-      const value = await fetchFunction();
-      this.set(key, value, ttlSeconds);
-      return value;
-    } catch (error) {
-      throw error;
-    }
+    const value = await fetchFunction();
+    this.set(key, value, ttlSeconds);
+    return value;
   }
 
   clear() {
