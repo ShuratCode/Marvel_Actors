@@ -33,7 +33,7 @@ export class MoviesPerActorService {
   }
 
   processMovieCredits(movieName, credits, result) {
-    if (!credits || !credits.cast) {
+    if (!credits?.cast) {
       return;
     }
 

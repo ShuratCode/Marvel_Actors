@@ -4,8 +4,8 @@ import { movies, actors } from "./dataForQuestions.js";
 import { TmdbClient } from "./src/clients/tmdbClient.js";
 import { MemoryCache } from "./src/services/memoryCache.js";
 import { MoviesPerActorService } from "./src/services/moviesPerActorService.js";
-import { ActorsMultipleCharactersService } from "./src/services/actorsMultipleCharactersService.js";
-import { CharactersWithMultipleActorsService } from "./src/services/charactersWithMultipleActorsService.js";
+import { ActorService } from "./src/services/actorService.js";
+import { CharacterService } from "./src/services/characterService.js";
 import { createApiRouter } from "./src/routes/api.js";
 import { errorHandler } from "./src/middleware/errorHandler.js";
 import { requestLogger } from "./src/middleware/requestLogger.js";
@@ -20,7 +20,8 @@ if (!apiKey) {
 
 // 1. Initialize Core Services
 const tmdbClient = new TmdbClient(apiKey);
-const cache = new MemoryCache(60 * 60); // 1 hour TTL default
+const cacheTtl = parseInt(process.env.CACHE_TTL, 10) || 3600; // Default 1 hour
+const cache = new MemoryCache(cacheTtl);
 
 // 2. Initialize Business Logic Services
 const moviesPerActorService = new MoviesPerActorService(
@@ -30,13 +31,13 @@ const moviesPerActorService = new MoviesPerActorService(
   actors
 );
 
-const actorsMultipleCharactersService = new ActorsMultipleCharactersService(
+const actorService = new ActorService(
   tmdbClient,
   cache,
   movies
 );
 
-const charactersWithMultipleActorsService = new CharactersWithMultipleActorsService(
+const characterService = new CharacterService(
   tmdbClient,
   cache,
   movies
@@ -45,8 +46,8 @@ const charactersWithMultipleActorsService = new CharactersWithMultipleActorsServ
 // 3. Setup Routes
 const apiRouter = createApiRouter({
   moviesPerActorService,
-  actorsMultipleCharactersService,
-  charactersWithMultipleActorsService,
+  actorService,
+  characterService,
 });
 
 app.use(express.json());

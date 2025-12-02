@@ -2,8 +2,8 @@ import express from 'express';
 
 export function createApiRouter({
   moviesPerActorService,
-  actorsMultipleCharactersService,
-  charactersWithMultipleActorsService,
+  actorService,
+  characterService,
 }) {
   const router = express.Router();
 
@@ -18,7 +18,7 @@ export function createApiRouter({
 
   router.get('/actors-multiple-characters', async (req, res, next) => {
     try {
-      const result = await actorsMultipleCharactersService.getActorsWithMultipleCharacters();
+      const result = await actorService.getActorsWithMultipleCharacters();
       res.json(result);
     } catch (error) {
       next(error);
@@ -27,7 +27,7 @@ export function createApiRouter({
 
   router.get('/characters-multiple-actors', async (req, res, next) => {
     try {
-      const result = await charactersWithMultipleActorsService.getCharactersWithMultipleActors();
+      const result = await characterService.getCharactersWithMultipleActors();
       res.json(result);
     } catch (error) {
       next(error);

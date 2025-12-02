@@ -1,6 +1,6 @@
 import { logger } from '../utils/logger.js';
 
-export class CharactersWithMultipleActorsService {
+export class CharacterService {
   constructor(tmdbClient, cache, movies) {
     this.tmdbClient = tmdbClient;
     this.cache = cache;

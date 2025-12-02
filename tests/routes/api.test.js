@@ -12,10 +12,10 @@ describe('API Routes', () => {
       moviesPerActorService: {
         getMoviesPerActor: jest.fn(),
       },
-      actorsMultipleCharactersService: {
+      actorService: {
         getActorsWithMultipleCharacters: jest.fn(),
       },
-      charactersWithMultipleActorsService: {
+      characterService: {
         getCharactersWithMultipleActors: jest.fn(),
       },
     };
@@ -47,8 +47,8 @@ describe('API Routes', () => {
 
   describe('GET /api/v1/actors-multiple-characters', () => {
     it('should return data from service', async () => {
-      const mockData = [{ actorName: 'Actor A', characters: ['C1', 'C2'] }];
-      mockServices.actorsMultipleCharactersService.getActorsWithMultipleCharacters.mockResolvedValue(mockData);
+      const mockData = { 'Actor A': [{ movieName: 'M1', characterName: 'C1' }] };
+      mockServices.actorService.getActorsWithMultipleCharacters.mockResolvedValue(mockData);
 
       const response = await request(app).get('/api/v1/actors-multiple-characters');
 
@@ -59,8 +59,8 @@ describe('API Routes', () => {
 
   describe('GET /api/v1/characters-multiple-actors', () => {
     it('should return data from service', async () => {
-      const mockData = [{ characterName: 'Char A', actors: ['A1', 'A2'] }];
-      mockServices.charactersWithMultipleActorsService.getCharactersWithMultipleActors.mockResolvedValue(mockData);
+      const mockData = { 'Char A': [{ movieName: 'M1', actorName: 'A1' }] };
+      mockServices.characterService.getCharactersWithMultipleActors.mockResolvedValue(mockData);
 
       const response = await request(app).get('/api/v1/characters-multiple-actors');
 
@@ -69,4 +69,3 @@ describe('API Routes', () => {
     });
   });
 });
-

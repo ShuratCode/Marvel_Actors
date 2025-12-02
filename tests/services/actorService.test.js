@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { ActorsMultipleCharactersService } from '../../src/services/actorsMultipleCharactersService.js';
+import { ActorService } from '../../src/services/actorService.js';
 
-describe('ActorsMultipleCharactersService', () => {
+describe('ActorService', () => {
   let service;
   let mockTmdbClient;
   let mockCache;
@@ -20,7 +20,7 @@ describe('ActorsMultipleCharactersService', () => {
       getOrSet: jest.fn(),
     };
 
-    service = new ActorsMultipleCharactersService(mockTmdbClient, mockCache, mockMovies);
+    service = new ActorService(mockTmdbClient, mockCache, mockMovies);
   });
 
   it('should identify actors with multiple different characters', async () => {
