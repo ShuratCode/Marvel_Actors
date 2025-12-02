@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
 import { createApiRouter } from '../../src/routes/api.js';
+import { notFoundHandler, errorHandler } from '../../src/middleware/errorHandler.js';
 
 describe('API Routes', () => {
   let app;
@@ -23,6 +24,8 @@ describe('API Routes', () => {
     const router = createApiRouter(mockServices);
     app = express();
     app.use('/', router);
+    app.use(notFoundHandler);
+    app.use(errorHandler);
   });
 
   describe('GET /moviesPerActor', () => {
@@ -42,6 +45,11 @@ describe('API Routes', () => {
       const response = await request(app).get('/moviesPerActor');
 
       expect(response.status).toBe(500);
+      // In test env (like prod), internal errors are masked
+      expect(response.body).toEqual({
+        status: 'error',
+        message: 'Something went very wrong!'
+      });
     });
   });
 
@@ -66,6 +74,20 @@ describe('API Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockData);
+    });
+  });
+
+  describe('404 Handling', () => {
+    it('should return JSON 404 for non-existent routes', async () => {
+      const response = await request(app).get('/non-existent-route');
+
+      expect(response.status).toBe(404);
+      expect(response.headers['content-type']).toMatch(/json/);
+      // NotFoundError is operational, so it passes the message
+      expect(response.body).toEqual({
+        status: 'fail',
+        message: expect.stringContaining('Not Found'),
+      });
     });
   });
 });

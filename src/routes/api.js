@@ -1,4 +1,5 @@
 import express from 'express';
+import { asyncHandler } from '../utils/asyncHandler.js';
 
 export function createApiRouter({
   moviesPerActorService,
@@ -7,33 +8,20 @@ export function createApiRouter({
 }) {
   const router = express.Router();
 
-  router.get('/moviesPerActor', async (req, res, next) => {
-    try {
-      const result = await moviesPerActorService.getMoviesPerActor();
-      res.json(result);
-    } catch (error) {
-      next(error);
-    }
-  });
+  router.get('/moviesPerActor', asyncHandler(async (req, res) => {
+    const result = await moviesPerActorService.getMoviesPerActor();
+    res.json(result);
+  }));
 
-  router.get('/actorsWithMultipleCharacters', async (req, res, next) => {
-    try {
-      const result = await actorService.getActorsWithMultipleCharacters();
-      res.json(result);
-    } catch (error) {
-      next(error);
-    }
-  });
+  router.get('/actorsWithMultipleCharacters', asyncHandler(async (req, res) => {
+    const result = await actorService.getActorsWithMultipleCharacters();
+    res.json(result);
+  }));
 
-  router.get('/charactersWithMultipleActors', async (req, res, next) => {
-    try {
-      const result = await characterService.getCharactersWithMultipleActors();
-      res.json(result);
-    } catch (error) {
-      next(error);
-    }
-  });
+  router.get('/charactersWithMultipleActors', asyncHandler(async (req, res) => {
+    const result = await characterService.getCharactersWithMultipleActors();
+    res.json(result);
+  }));
 
   return router;
 }
-
