@@ -1,0 +1,22 @@
+{
+  "name": "backend_assignment_skeleton",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "axios": "^1.7.9"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "type": "module"
+}
