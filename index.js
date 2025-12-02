@@ -1,5 +1,8 @@
 import "dotenv/config";
 import express from "express";
+import helmet from "helmet";
+import cors from "cors";
+import rateLimit from "express-rate-limit";
 import { movies, actors } from "./dataForQuestions.js";
 import { TmdbClient } from "./src/clients/tmdbClient.js";
 import { MemoryCache } from "./src/services/memoryCache.js";
@@ -62,7 +65,28 @@ const apiRouter = createApiRouter({
   characterService,
 });
 
-app.use(express.json());
+
+app.use(helmet()); 
+app.use(cors());
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100, 
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: 'Too many requests from this IP, please try again in 15 minutes',
+  handler: (req, res, next, options) => {
+    res.status(options.statusCode).json({
+      status: 'fail',
+      message: options.message
+    });
+  }
+});
+
+
+app.use(limiter);
+
+app.use(express.json({ limit: '10kb' }));
 app.use(requestLogger); 
 app.use("/", apiRouter);
 
