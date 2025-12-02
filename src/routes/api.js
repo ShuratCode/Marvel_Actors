@@ -7,7 +7,7 @@ export function createApiRouter({
 }) {
   const router = express.Router();
 
-  router.get('/movies-per-actor', async (req, res, next) => {
+  router.get('/moviesPerActor', async (req, res, next) => {
     try {
       const result = await moviesPerActorService.getMoviesPerActor();
       res.json(result);
@@ -16,7 +16,7 @@ export function createApiRouter({
     }
   });
 
-  router.get('/actors-multiple-characters', async (req, res, next) => {
+  router.get('/actorsWithMultipleCharacters', async (req, res, next) => {
     try {
       const result = await actorService.getActorsWithMultipleCharacters();
       res.json(result);
@@ -25,7 +25,7 @@ export function createApiRouter({
     }
   });
 
-  router.get('/characters-multiple-actors', async (req, res, next) => {
+  router.get('/charactersWithMultipleActors', async (req, res, next) => {
     try {
       const result = await characterService.getCharactersWithMultipleActors();
       res.json(result);

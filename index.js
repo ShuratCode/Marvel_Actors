@@ -52,7 +52,7 @@ const apiRouter = createApiRouter({
 
 app.use(express.json());
 app.use(requestLogger); 
-app.use("/api/v1", apiRouter);
+app.use("/", apiRouter);
 
 // Centralized Error Handler
 app.use(errorHandler);
