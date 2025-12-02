@@ -50,7 +50,7 @@ describe('ActorsMultipleCharactersService', () => {
     expect(result).toEqual([
       {
         actorName: 'Chris Evans',
-        characters: ['Human Torch', 'Captain America'],
+        characters: ['Captain America', 'Human Torch'],
       },
     ]);
   });

@@ -40,7 +40,7 @@ export class ActorsMultipleCharactersService {
       if (characters.size > 1) {
         result.push({
           actorName: originalName,
-          characters: Array.from(characters),
+          characters: Array.from(characters).sort(),
         });
       }
     }
