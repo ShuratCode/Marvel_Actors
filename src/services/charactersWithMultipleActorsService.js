@@ -14,37 +14,38 @@ export class CharactersWithMultipleActorsService {
     const movieEntries = Object.entries(this.movies);
 
     await Promise.all(
-      movieEntries.map(async ([, movieId]) => {
+      movieEntries.map(async ([movieName, movieId]) => {
         const credits = await this.cache.getOrSet(
           `movie_credits_${movieId}`,
           () => this.tmdbClient.fetchMovieCredits(movieId)
         );
 
-        if (credits && credits.cast) {
+        if (credits?.cast) {
           credits.cast.forEach((member) => {
             const normalizedCharName = member.character.toLowerCase();
             
             if (!characterActorsMap.has(normalizedCharName)) {
               characterActorsMap.set(normalizedCharName, {
                 originalName: member.character,
-                actors: new Set(),
+                appearances: [],
               });
             }
 
             const entry = characterActorsMap.get(normalizedCharName);
-            entry.actors.add(member.name);
+            entry.appearances.push({
+              movieName: movieName,
+              actorName: member.name
+            });
           });
         }
       })
     );
 
-    const result = [];
-    for (const { originalName, actors } of characterActorsMap.values()) {
-      if (actors.size > 1) {
-        result.push({
-          characterName: originalName,
-          actors: Array.from(actors).sort(),
-        });
+    const result = {};
+    for (const { originalName, appearances } of characterActorsMap.values()) {
+      const uniqueActors = new Set(appearances.map(a => a.actorName));
+      if (uniqueActors.size > 1) {
+        result[originalName] = appearances;
       }
     }
 

@@ -45,15 +45,15 @@ describe('CharactersWithMultipleActorsService', () => {
 
     const result = await service.getCharactersWithMultipleActors();
     
-    expect(result).toEqual([
-      {
-        characterName: 'Bruce Banner / The Hulk',
-        actors: ['Edward Norton', 'Mark Ruffalo'],
-      },
-    ]);
+    expect(result['Bruce Banner / The Hulk']).toBeDefined();
+    expect(result['Bruce Banner / The Hulk']).toHaveLength(2);
+    expect(result['Bruce Banner / The Hulk']).toEqual(expect.arrayContaining([
+      { movieName: 'Movie 1', actorName: 'Edward Norton' },
+      { movieName: 'Movie 2', actorName: 'Mark Ruffalo' }
+    ]));
   });
 
-  it('should return empty list if no characters are played by multiple actors', async () => {
+  it('should return empty object if no characters are played by multiple actors', async () => {
     const movie1Credits = {
       cast: [{ name: 'Actor A', character: 'Char A' }],
     };
@@ -68,7 +68,7 @@ describe('CharactersWithMultipleActorsService', () => {
 
     const result = await service.getCharactersWithMultipleActors();
 
-    expect(result).toEqual([]);
+    expect(result).toEqual({});
   });
 
   it('should ignore case for character names but preserve first encountered casing', async () => {
@@ -86,8 +86,11 @@ describe('CharactersWithMultipleActorsService', () => {
   
       const result = await service.getCharactersWithMultipleActors();
   
-      expect(result).toHaveLength(1);
-      expect(result[0].characterName).toBe('character a');
-      expect(result[0].actors).toEqual(expect.arrayContaining(['Actor 1', 'Actor 2']));
+      const keys = Object.keys(result);
+      expect(keys).toHaveLength(1);
+      expect(result[keys[0]]).toEqual(expect.arrayContaining([
+          { movieName: 'Movie 1', actorName: 'Actor 1' },
+          { movieName: 'Movie 2', actorName: 'Actor 2' }
+      ]));
   });
 });
