@@ -45,12 +45,12 @@ describe('CharacterService', () => {
 
     const result = await service.getCharactersWithMultipleActors();
     
-    expect(result['Bruce Banner / The Hulk']).toBeDefined();
-    expect(result['Bruce Banner / The Hulk']).toHaveLength(2);
-    expect(result['Bruce Banner / The Hulk']).toEqual(expect.arrayContaining([
-      { movieName: 'Movie 1', actorName: 'Edward Norton' },
-      { movieName: 'Movie 2', actorName: 'Mark Ruffalo' }
-    ]));
+    expect(result).toEqual({
+      'Bruce Banner / The Hulk': expect.arrayContaining([
+        { movieName: 'Movie 1', actorName: 'Edward Norton' },
+        { movieName: 'Movie 2', actorName: 'Mark Ruffalo' }
+      ])
+    });
   });
 
   it('should return empty object if no characters are played by multiple actors', async () => {

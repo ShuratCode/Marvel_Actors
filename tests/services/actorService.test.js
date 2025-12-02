@@ -47,12 +47,12 @@ describe('ActorService', () => {
 
     const result = await service.getActorsWithMultipleCharacters();
     
-    expect(result['Chris Evans']).toBeDefined();
-    expect(result['Chris Evans']).toHaveLength(2);
-    expect(result['Chris Evans']).toEqual(expect.arrayContaining([
-      { movieName: 'Movie 1', characterName: 'Human Torch' },
-      { movieName: 'Movie 2', characterName: 'Captain America' }
-    ]));
+    expect(result).toEqual({
+      'Chris Evans': expect.arrayContaining([
+        { movieName: 'Movie 1', characterName: 'Human Torch' },
+        { movieName: 'Movie 2', characterName: 'Captain America' }
+      ])
+    });
 
     expect(result['Robert Downey Jr.']).toBeUndefined();
   });

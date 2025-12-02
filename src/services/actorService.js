@@ -1,10 +1,12 @@
 import { logger } from '../utils/logger.js';
+import pLimit from 'p-limit';
 
 export class ActorService {
   constructor(tmdbClient, cache, movies) {
     this.tmdbClient = tmdbClient;
     this.cache = cache;
     this.movies = movies;
+    this.limit = pLimit(5); // Concurrency limit of 5
   }
 
   async getActorsWithMultipleCharacters() {
@@ -14,31 +16,33 @@ export class ActorService {
     const movieEntries = Object.entries(this.movies);
 
     await Promise.all(
-      movieEntries.map(async ([movieName, movieId]) => {
-        const credits = await this.cache.getOrSet(
-          `movie_credits_${movieId}`,
-          () => this.tmdbClient.fetchMovieCredits(movieId)
-        );
+      movieEntries.map(([movieName, movieId]) => 
+        this.limit(async () => {
+          const credits = await this.cache.getOrSet(
+            `movie_credits_${movieId}`,
+            () => this.tmdbClient.fetchMovieCredits(movieId)
+          );
 
-        if (credits?.cast) {
-          credits.cast.forEach((member) => {
-            const normalizedName = member.name.toLowerCase();
-            
-            if (!actorCharactersMap.has(normalizedName)) {
-              actorCharactersMap.set(normalizedName, {
-                originalName: member.name,
-                roles: [],
+          if (credits?.cast) {
+            credits.cast.forEach((member) => {
+              const normalizedName = member.name.toLowerCase();
+              
+              if (!actorCharactersMap.has(normalizedName)) {
+                actorCharactersMap.set(normalizedName, {
+                  originalName: member.name,
+                  roles: [],
+                });
+              }
+
+              const entry = actorCharactersMap.get(normalizedName);
+              entry.roles.push({
+                movieName: movieName,
+                characterName: member.character
               });
-            }
-
-            const entry = actorCharactersMap.get(normalizedName);
-            entry.roles.push({
-              movieName: movieName,
-              characterName: member.character
             });
-          });
-        }
-      })
+          }
+        })
+      )
     );
 
     const result = {};

@@ -1,4 +1,5 @@
 import { logger } from '../utils/logger.js';
+import pLimit from 'p-limit';
 
 export class MoviesPerActorService {
   constructor(tmdbClient, cache, movies, actors) {
@@ -6,6 +7,7 @@ export class MoviesPerActorService {
     this.cache = cache;
     this.movies = movies;
     this.actors = actors;
+    this.limit = pLimit(5); // Concurrency limit of 5
   }
 
   async getMoviesPerActor() {
@@ -18,14 +20,16 @@ export class MoviesPerActorService {
     const movieEntries = Object.entries(this.movies);
     
     await Promise.all(
-      movieEntries.map(async ([movieName, movieId]) => {
-        const credits = await this.cache.getOrSet(
-          `movie_credits_${movieId}`,
-          () => this.tmdbClient.fetchMovieCredits(movieId)
-        );
+      movieEntries.map(([movieName, movieId]) => 
+        this.limit(async () => {
+          const credits = await this.cache.getOrSet(
+            `movie_credits_${movieId}`,
+            () => this.tmdbClient.fetchMovieCredits(movieId)
+          );
 
-        this.processMovieCredits(movieName, credits, result);
-      })
+          this.processMovieCredits(movieName, credits, result);
+        })
+      )
     );
 
     logger.info("Finished execution of getMoviesPerActor.");

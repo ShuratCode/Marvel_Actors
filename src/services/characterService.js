@@ -1,10 +1,12 @@
 import { logger } from '../utils/logger.js';
+import pLimit from 'p-limit';
 
 export class CharacterService {
   constructor(tmdbClient, cache, movies) {
     this.tmdbClient = tmdbClient;
     this.cache = cache;
     this.movies = movies;
+    this.limit = pLimit(5);
   }
 
   async getCharactersWithMultipleActors() {
@@ -14,31 +16,33 @@ export class CharacterService {
     const movieEntries = Object.entries(this.movies);
 
     await Promise.all(
-      movieEntries.map(async ([movieName, movieId]) => {
-        const credits = await this.cache.getOrSet(
-          `movie_credits_${movieId}`,
-          () => this.tmdbClient.fetchMovieCredits(movieId)
-        );
+      movieEntries.map(([movieName, movieId]) => 
+        this.limit(async () => {
+          const credits = await this.cache.getOrSet(
+            `movie_credits_${movieId}`,
+            () => this.tmdbClient.fetchMovieCredits(movieId)
+          );
 
-        if (credits?.cast) {
-          credits.cast.forEach((member) => {
-            const normalizedCharName = member.character.toLowerCase();
-            
-            if (!characterActorsMap.has(normalizedCharName)) {
-              characterActorsMap.set(normalizedCharName, {
-                originalName: member.character,
-                appearances: [],
+          if (credits?.cast) {
+            credits.cast.forEach((member) => {
+              const normalizedCharName = member.character.toLowerCase();
+              
+              if (!characterActorsMap.has(normalizedCharName)) {
+                characterActorsMap.set(normalizedCharName, {
+                  originalName: member.character,
+                  appearances: [],
+                });
+              }
+
+              const entry = characterActorsMap.get(normalizedCharName);
+              entry.appearances.push({
+                movieName: movieName,
+                actorName: member.name
               });
-            }
-
-            const entry = characterActorsMap.get(normalizedCharName);
-            entry.appearances.push({
-              movieName: movieName,
-              actorName: member.name
             });
-          });
-        }
-      })
+          }
+        })
+      )
     );
 
     const result = {};
