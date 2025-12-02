@@ -47,15 +47,17 @@ describe('ActorsMultipleCharactersService', () => {
 
     const result = await service.getActorsWithMultipleCharacters();
     
-    expect(result).toEqual([
-      {
-        actorName: 'Chris Evans',
-        characters: ['Captain America', 'Human Torch'],
-      },
-    ]);
+    expect(result['Chris Evans']).toBeDefined();
+    expect(result['Chris Evans']).toHaveLength(2);
+    expect(result['Chris Evans']).toEqual(expect.arrayContaining([
+      { movieName: 'Movie 1', characterName: 'Human Torch' },
+      { movieName: 'Movie 2', characterName: 'Captain America' }
+    ]));
+
+    expect(result['Robert Downey Jr.']).toBeUndefined();
   });
 
-  it('should return empty list if no actors play multiple characters', async () => {
+  it('should return empty object if no actors play multiple characters', async () => {
     const movie1Credits = {
       cast: [{ name: 'Actor A', character: 'Char A' }],
     };
@@ -70,7 +72,7 @@ describe('ActorsMultipleCharactersService', () => {
 
     const result = await service.getActorsWithMultipleCharacters();
 
-    expect(result).toEqual([]);
+    expect(result).toEqual({});
   });
 
   it('should fail completely if one request fails', async () => {
@@ -95,9 +97,12 @@ describe('ActorsMultipleCharactersService', () => {
   
       const result = await service.getActorsWithMultipleCharacters();
   
-      expect(result).toHaveLength(1);
-      expect(result[0].actorName.toLowerCase()).toBe('actor a');
-      expect(result[0].characters).toEqual(expect.arrayContaining(['Char 1', 'Char 2']));
+      const keys = Object.keys(result);
+      expect(keys).toHaveLength(1);
+
+      expect(result[keys[0]]).toEqual(expect.arrayContaining([
+          { movieName: 'Movie 1', characterName: 'Char 1' },
+          { movieName: 'Movie 2', characterName: 'Char 2' }
+      ]));
   });
 });
-
