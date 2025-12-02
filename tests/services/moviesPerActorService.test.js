@@ -77,15 +77,20 @@ describe('MoviesPerActorService', () => {
     expect(mockCache.getOrSet).toHaveBeenCalledWith('movie_credits_102', expect.any(Function));
   });
 
-  it('should fail completely if one request fails', async () => {
+  it('should continue if one request fails', async () => {
      mockCache.getOrSet.mockImplementation(async (key, fetchFn) => {
       return await fetchFn();
     });
     
+    // First call fails, second succeeds
     mockTmdbClient.fetchMovieCredits
       .mockRejectedValueOnce(new Error('API Error'))
       .mockResolvedValueOnce({ cast: [{ name: 'Actor A' }] });
 
-    await expect(service.getMoviesPerActor()).rejects.toThrow('API Error');
+    const result = await service.getMoviesPerActor();
+
+    // Should include results from successful calls
+    // Movie 1 failed, Movie 2 succeeded with Actor A
+    expect(result['Actor A']).toEqual(['Movie 2']);
   });
 });

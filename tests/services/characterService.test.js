@@ -93,4 +93,13 @@ describe('CharacterService', () => {
           { movieName: 'Movie 2', actorName: 'Actor 2' }
       ]));
   });
+
+  it('should continue if one request fails', async () => {
+    mockCache.getOrSet.mockImplementation(async (k, fn) => fn());
+    mockTmdbClient.fetchMovieCredits
+        .mockRejectedValueOnce(new Error('API Error'))
+        .mockResolvedValueOnce({ cast: [] });
+
+    await expect(service.getCharactersWithMultipleActors()).resolves.toEqual({});
+  });
 });

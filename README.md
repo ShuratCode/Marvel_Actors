@@ -78,7 +78,7 @@ Base URL: `/api/v1`
 
 Returns a mapping of actors to the list of MCU movies they appeared in.
 
-- **Endpoint**: `GET /api/v1/movies-per-actor`
+- **Endpoint**: `GET /moviesPerActor`
 - **Response**:
 
   ```json
@@ -99,40 +99,34 @@ Returns a mapping of actors to the list of MCU movies they appeared in.
 
 Returns a list of actors who have played more than one unique character.
 
-- **Endpoint**: `GET /api/v1/actors-multiple-characters`
+- **Endpoint**: `GET /actorsWithMultipleCharacters`
 - **Response**:
 
   ```json
-  [
-    {
-      "actorName": "Chris Evans",
-      "characters": [
-        "Human Torch",
-        "Captain America"
-      ]
-    },
+  {
+    "Chris Evans": [
+      { "movieName": "Fantastic Four (2005)", "characterName": "Human Torch" },
+      { "movieName": "Captain America: The First Avenger", "characterName": "Captain America" }
+    ],
     ...
-  ]
+  }
   ```
 
-### 3. Get Characters With Multiple Actors
+### 3. Get Roles (Characters) With Multiple Actors
 
 Returns a list of characters that have been portrayed by more than one actor.
 
-- **Endpoint**: `GET /api/v1/characters-multiple-actors`
+- **Endpoint**: `GET /charactersWithMultipleActors`
 - **Response**:
 
   ```json
-  [
-    {
-      "characterName": "Bruce Banner / The Hulk",
-      "actors": [
-        "Edward Norton",
-        "Mark Ruffalo"
-      ]
-    },
+  {
+    "Bruce Banner / The Hulk": [
+      { "movieName": "The Incredible Hulk", "actorName": "Edward Norton" },
+      { "movieName": "The Avengers", "actorName": "Mark Ruffalo" }
+    ],
     ...
-  ]
+  }
   ```
 
 ## Project Structure

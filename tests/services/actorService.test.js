@@ -75,11 +75,22 @@ describe('ActorService', () => {
     expect(result).toEqual({});
   });
 
-  it('should fail completely if one request fails', async () => {
+  it('should continue if one request fails', async () => {
     mockCache.getOrSet.mockImplementation(async (k, fn) => fn());
-    mockTmdbClient.fetchMovieCredits.mockRejectedValue(new Error('API Error'));
-
-    await expect(service.getActorsWithMultipleCharacters()).rejects.toThrow('API Error');
+    
+    // First movie fails, second movie succeeds
+    mockTmdbClient.fetchMovieCredits
+        .mockRejectedValueOnce(new Error('API Error'))
+        .mockResolvedValueOnce({ 
+            cast: [
+                { name: 'Actor A', character: 'Char A' },
+                { name: 'Actor A', character: 'Char B' } 
+            ] 
+        });
+        
+    
+    const result = await service.getActorsWithMultipleCharacters();
+    expect(result).toBeDefined();
   });
   
   it('should ignore case for actor names but preserve character names', async () => {

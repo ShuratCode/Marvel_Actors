@@ -19,7 +19,7 @@ export class MoviesPerActorService {
 
     const movieEntries = Object.entries(this.movies);
     
-    await Promise.all(
+    const results = await Promise.allSettled(
       movieEntries.map(([movieName, movieId]) => 
         this.limit(async () => {
           const credits = await this.cache.getOrSet(
@@ -31,6 +31,13 @@ export class MoviesPerActorService {
         })
       )
     );
+
+    results.forEach((promiseResult, index) => {
+      if (promiseResult.status === 'rejected') {
+        const [movieName] = movieEntries[index];
+        logger.error(`Failed to process movie "${movieName}": ${promiseResult.reason}`);
+      }
+    });
 
     logger.info("Finished execution of getMoviesPerActor.");
     return result;
