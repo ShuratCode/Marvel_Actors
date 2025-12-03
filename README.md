@@ -72,7 +72,7 @@ The project uses **Jest** for unit and integration testing.
 
 ## API Documentation
 
-Base URL: `/api/v1`
+Base URL: `/`
 
 ### 1. Get Movies Per Actor
 
@@ -135,10 +135,11 @@ Returns a list of characters that have been portrayed by more than one actor.
 .
 ├── src/
 │   ├── clients/        # External API clients (TMDB)
+│   ├── controllers/    # Request handlers
 │   ├── middleware/     # Express middleware (Error handling)
 │   ├── routes/         # Route definitions
 │   ├── services/       # Business logic services
-│   └── app.js          # (Implicit in index.js for this simple setup)
+│   └── utils/          # Utility functions and helpers
 ├── tests/              # Jest tests mirroring src structure
 ├── dataForQuestions.js # Input data (movies/actors list)
 ├── index.js            # Entry point
